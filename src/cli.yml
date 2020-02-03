@@ -1,0 +1,43 @@
+name: cargo-git-edit
+version: "0.1-alpha"
+author: Andrew P. <dev@andrewplaza.dev>
+about: Parses Cargo.toml files to change a git dependency version
+args:
+    - git_repo:
+        short: g
+        long: git-repo
+        help: sets the git repository to look for
+        takes_value: true
+        required: true
+    - new_repo:
+        short: n
+        long: new-repo
+        help: sets a new git repo in place of the old one
+        takes_value: true
+        required: false
+    - rev:
+        long: rev
+        help: sets a specific revision
+        takes_value: true
+        conflicts_with:
+          - branch
+    - branch:
+        long: branch
+        help: sets a branch
+        takes_value: true
+        conflicts_with:
+          - rev
+    - ignore_target:
+        short: i
+        long: ignore-target
+        help: ignore the target directory when looking for Cargo.toml files
+
+#subcommands:
+#   - test:
+#       about: controls testing features
+#       version: "1.3"
+#       author: Someone E. <someone_else@other.com>
+#       args:
+#           - debug:
+#               short: d
+#               help: print debug information

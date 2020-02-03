@@ -1,0 +1,239 @@
+[src/main.rs:80] table = "dependencies"
+[src/main.rs:89] v = Value(
+    InlineTable(
+        InlineTable {
+            items: {
+                "package": TableKeyValue {
+                    key: Repr {
+                        decor: Decor {
+                            prefix: " ",
+                            suffix: " ",
+                        },
+                        raw_value: "package",
+                    },
+                    value: Value(
+                        String(
+                            Formatted {
+                                value: "bladerunner-cli",
+                                repr: Repr {
+                                    decor: Decor {
+                                        prefix: " ",
+                                        suffix: "",
+                                    },
+                                    raw_value: "\"bladerunner-cli\"",
+                                },
+                            },
+                        ),
+                    ),
+                },
+                "path": TableKeyValue {
+                    key: Repr {
+                        decor: Decor {
+                            prefix: " ",
+                            suffix: " ",
+                        },
+                        raw_value: "path",
+                    },
+                    value: Value(
+                        String(
+                            Formatted {
+                                value: "cli",
+                                repr: Repr {
+                                    decor: Decor {
+                                        prefix: " ",
+                                        suffix: " ",
+                                    },
+                                    raw_value: "\"cli\"",
+                                },
+                            },
+                        ),
+                    ),
+                },
+            },
+            preamble: "",
+            decor: Decor {
+                prefix: " ",
+                suffix: "",
+            },
+        },
+    ),
+)
+[src/main.rs:89] v = Value(
+    InlineTable(
+        InlineTable {
+            items: {
+                "git": TableKeyValue {
+                    key: Repr {
+                        decor: Decor {
+                            prefix: " ",
+                            suffix: " ",
+                        },
+                        raw_value: "git",
+                    },
+                    value: Value(
+                        String(
+                            Formatted {
+                                value: "https://github.com/chisa/monorepo",
+                                repr: Repr {
+                                    decor: Decor {
+                                        prefix: " ",
+                                        suffix: "",
+                                    },
+                                    raw_value: "\"https://github.com/chisa/monorepo\"",
+                                },
+                            },
+                        ),
+                    ),
+                },
+                "branch": TableKeyValue {
+                    key: Repr {
+                        decor: Decor {
+                            prefix: " ",
+                            suffix: " ",
+                        },
+                        raw_value: "branch",
+                    },
+                    value: Value(
+                        String(
+                            Formatted {
+                                value: "v1",
+                                repr: Repr {
+                                    decor: Decor {
+                                        prefix: " ",
+                                        suffix: " ",
+                                    },
+                                    raw_value: "\"v1\"",
+                                },
+                            },
+                        ),
+                    ),
+                },
+            },
+            preamble: "",
+            decor: Decor {
+                prefix: " ",
+                suffix: "",
+            },
+        },
+    ),
+)
+[src/main.rs:89] v = Value(
+    InlineTable(
+        InlineTable {
+            items: {
+                "git": TableKeyValue {
+                    key: Repr {
+                        decor: Decor {
+                            prefix: " ",
+                            suffix: " ",
+                        },
+                        raw_value: "git",
+                    },
+                    value: Value(
+                        String(
+                            Formatted {
+                                value: "https://github.com/chisa/monorepo",
+                                repr: Repr {
+                                    decor: Decor {
+                                        prefix: " ",
+                                        suffix: "",
+                                    },
+                                    raw_value: "\"https://github.com/chisa/monorepo\"",
+                                },
+                            },
+                        ),
+                    ),
+                },
+                "branch": TableKeyValue {
+                    key: Repr {
+                        decor: Decor {
+                            prefix: " ",
+                            suffix: " ",
+                        },
+                        raw_value: "branch",
+                    },
+                    value: Value(
+                        String(
+                            Formatted {
+                                value: "v2",
+                                repr: Repr {
+                                    decor: Decor {
+                                        prefix: " ",
+                                        suffix: " ",
+                                    },
+                                    raw_value: "\"v2\"",
+                                },
+                            },
+                        ),
+                    ),
+                },
+            },
+            preamble: "",
+            decor: Decor {
+                prefix: " ",
+                suffix: "",
+            },
+        },
+    ),
+)
+[src/main.rs:89] v = Table(
+    Table {
+        items: {
+            "git": TableKeyValue {
+                key: Repr {
+                    decor: Decor {
+                        prefix: "",
+                        suffix: " ",
+                    },
+                    raw_value: "git",
+                },
+                value: Value(
+                    String(
+                        Formatted {
+                            value: "https://github.com/chisa/monorepo",
+                            repr: Repr {
+                                decor: Decor {
+                                    prefix: " ",
+                                    suffix: "",
+                                },
+                                raw_value: "\"https://github.com/chisa/monorepo\"",
+                            },
+                        },
+                    ),
+                ),
+            },
+            "rev": TableKeyValue {
+                key: Repr {
+                    decor: Decor {
+                        prefix: "",
+                        suffix: " ",
+                    },
+                    raw_value: "rev",
+                },
+                value: Value(
+                    String(
+                        Formatted {
+                            value: "v3",
+                            repr: Repr {
+                                decor: Decor {
+                                    prefix: " ",
+                                    suffix: "",
+                                },
+                                raw_value: "\"v3\"",
+                            },
+                        },
+                    ),
+                ),
+            },
+        },
+        decor: Decor {
+            prefix: "\n",
+            suffix: "",
+        },
+        implicit: false,
+        position: Some(
+            4,
+        ),
+    },
+)
+Error: NotFound("dep Value")

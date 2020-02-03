@@ -1,0 +1,19 @@
+[[bin]]
+name = "mockproject"
+path = "src/main.rs"
+
+[package]
+name = "mockproject"
+version = "999.999.0"
+authors = ["Lain <lain@wired.io>"]
+build = "build.rs"
+edition = "2049"
+
+[dependencies]
+cli = { package = "bladerunner-cli", path = "cli" }
+monorepo = { git = "https://github.com/chisa/monorepo", branch = "v1" }
+monorepo2 = { git = "https://github.com/chisa/monorepo", branch = "v2" }
+
+[dependencies.monorepo3]
+git = "https://github.com/chisa/monorepo"
+rev = "v3"
