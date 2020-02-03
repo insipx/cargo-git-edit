@@ -50,6 +50,16 @@ struct MutateGitDeps {
     app_config: Configuration,
 }
 
+enum TableOrValue {
+    Table,
+    Value,
+}
+
+enum TableOrInlineTableRef<'a> {
+    Table(&'a mut Table),
+    InlineTable(&'a mut InlineTable),
+}
+
 impl MutateGitDeps {
     pub fn new(app_config: Configuration) -> Self {
         Self { app_config }
@@ -58,7 +68,7 @@ impl MutateGitDeps {
     pub fn run(
         self, mut cargo_configs: HashMap<String, Document>,
     ) -> Result<(), Error> {
-        for (path, config) in cargo_configs.iter_mut() {
+        for (_path, config) in cargo_configs.iter_mut() {
             if config.as_table().contains_table("dependencies") {
                 self.mutate_git_deps(config, "dependencies")?;
             }
@@ -67,7 +77,7 @@ impl MutateGitDeps {
             }
         }
 
-        for (path, conf) in cargo_configs.iter() {
+        for (_path, conf) in cargo_configs.iter() {
             println!("{}", conf.to_string());
         }
         Ok(())
@@ -76,10 +86,10 @@ impl MutateGitDeps {
     fn mutate_git_deps(
         &self, doc: &mut Document, table: &str,
     ) -> Result<(), Error> {
-        let mut keys: Vec<String> = Vec::new();
-        dbg!(table);
-         // check for table or inline table
-         // otherwise fails
+        let mut keys: Vec<(TableOrValue, String)> = Vec::new();
+
+        // check for table or inline table
+        // otherwise fails
         let dep_table = doc
             .as_table()
             .get(table)
@@ -88,9 +98,16 @@ impl MutateGitDeps {
             .ok_or(Error::NotFound("Convert Table".to_string()))?;
 
         for (k, v) in dep_table.iter() {
-            dbg!(v);
-            if v.as_value()
-                .ok_or(Error::NotFound("dep Value".to_string()))?
+            if v.is_table() {
+                let val = v
+                    .as_table()
+                    .ok_or(Error::IncorrectCast("table".to_string()))?;
+                if val.contains_key("git") {
+                    keys.push((TableOrValue::Table, k.to_string()))
+                }
+            } else if v
+                .as_value()
+                .ok_or(Error::IncorrectCast("value".to_string()))?
                 .is_inline_table()
             {
                 let val = v
@@ -100,11 +117,11 @@ impl MutateGitDeps {
                     .ok_or(Error::NotFound("Inline Table".to_string()))?;
 
                 if val.contains_key("git") {
-                    keys.push(k.to_string());
+                    keys.push((TableOrValue::Value, k.to_string()));
                 }
             }
         }
-        let mut dep_table = doc
+        let dep_table = doc
             .as_table_mut()
             .entry(table)
             .as_table_mut()
@@ -116,38 +133,78 @@ impl MutateGitDeps {
 
     /// internal api to change values based on the values inputted by user
     fn change_selected_values(
-        &self, dep: &mut Table, keys: Vec<String>,
+        &self, dep: &mut Table, keys: Vec<(TableOrValue, String)>,
     ) -> Result<(), Error> {
         for key in keys.iter() {
-            let dep: &mut InlineTable = dep
-                .entry(key)
-                .as_value_mut()
-                .ok_or(Error::NotFound("git Value".to_string()))?
-                .as_inline_table_mut()
-                .ok_or(Error::NotFound("Inline Table".to_string()))?;
-            dep.remove("git");
-            dep.get_or_insert("git", self.app_config.new_repo.clone());
+            dbg!(dep.entry(&key.1));
 
-            if let Some(r) = &self.app_config.rev {
-                if dep.contains_key("rev") {
-                    dep.remove("rev");
+            let dep: TableOrInlineTableRef = match key.0 {
+                TableOrValue::Table => {
+                    let dep = dep
+                        .entry(&key.1)
+                        .as_table_mut()
+                        .ok_or(Error::IncorrectCast("table".to_string()))?;
+                    let git_val = dep.entry("git")
+                                     .as_value_mut()
+                                     .ok_or(Error::IncorrectCast("value".to_string()))?;
+                    if git_val.as_str() == Some(&self.app_config.git_repo) {
+                        dep["git"] = value(self.app_config.new_repo.clone());
+                    }
+                    TableOrInlineTableRef::Table(dep)
+                },
+                TableOrValue::Value => {
+                    let dep: &mut InlineTable = dep.entry(&key.1)
+                                 .as_value_mut()
+                                 .ok_or(Error::IncorrectCast("value".to_string()))?
+                                 .as_inline_table_mut()
+                                 .ok_or(Error::IncorrectCast("Inline Table".to_string()))?;
+                    dep.remove("git");
+                    dep.get_or_insert("git", self.app_config.new_repo.clone());
+                    TableOrInlineTableRef::InlineTable(dep)
                 }
-                dep.get_or_insert("rev", r.to_string());
-                if dep.contains_key("branch") {
-                    dep.remove("branch");
+            };
+            self.mutate_branch_revs(dep);
+        }
+        Ok(())
+    }
+
+    fn mutate_branch_revs(&self, mut dep: TableOrInlineTableRef) {
+        match dep {
+            TableOrInlineTableRef::Table(ref mut t) => {
+                if let Some(r) = &self.app_config.rev {
+                    t["rev"] = value(r.clone());
+                    if t.contains_key("branch") {
+                        t.remove("branch");
+                    }
                 }
-            }
-            if let Some(b) = &self.app_config.branch {
-                if dep.contains_key("branch") {
-                    dep.remove("branch");
+                if let Some(b) = &self.app_config.branch {
+                    t["branch"] = value(b.clone());
+                    if t.contains_key("rev") {
+                        t.remove("rev");
+                    }
                 }
-                dep.get_or_insert("branch", b.to_string());
-                if dep.contains_key("rev") {
-                    dep.remove("rev");
+            },
+            TableOrInlineTableRef::InlineTable(ref mut i) => {
+                if let Some(r) = &self.app_config.rev {
+                    if i.contains_key("rev") {
+                        i.remove("rev");
+                    }
+                    i.get_or_insert("rev", r.to_string());
+                    if i.contains_key("branch") {
+                        i.remove("branch");
+                    }
+                }
+                if let Some(b) = &self.app_config.branch {
+                    if i.contains_key("branch") {
+                       i.remove("branch");
+                    }
+                    i.get_or_insert("branch", b.to_string());
+                    if i.contains_key("rev") {
+                       i.remove("rev");
+                    }
                 }
             }
         }
-        Ok(())
     }
 }
 

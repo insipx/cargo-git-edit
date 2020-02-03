@@ -1,5 +1,5 @@
 [src/main.rs:80] table = "dependencies"
-[src/main.rs:89] v = Value(
+[src/main.rs:92] v = Value(
     InlineTable(
         InlineTable {
             items: {
@@ -58,7 +58,7 @@
         },
     ),
 )
-[src/main.rs:89] v = Value(
+[src/main.rs:92] v = Value(
     InlineTable(
         InlineTable {
             items: {
@@ -117,7 +117,7 @@
         },
     ),
 )
-[src/main.rs:89] v = Value(
+[src/main.rs:92] v = Value(
     InlineTable(
         InlineTable {
             items: {
@@ -176,7 +176,7 @@
         },
     ),
 )
-[src/main.rs:89] v = Table(
+[src/main.rs:92] v = Table(
     Table {
         items: {
             "git": TableKeyValue {
